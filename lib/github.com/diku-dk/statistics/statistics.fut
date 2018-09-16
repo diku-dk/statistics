@@ -13,7 +13,7 @@ module type statistics = {
   val variance : []t -> t
 }
 
-module statistics (R: real) : statistics = {
+module statistics (R: real) : statistics with t = R.t = {
   type t = R.t
 
   let mean [n] (vs: [n]t) : t =
@@ -25,7 +25,7 @@ module statistics (R: real) : statistics = {
     if n < 2 then R.i32 0
     else let m = mean vs
          let xs = map (\x -> R.(sq(x-m))) vs
-         in  (R.sum xs) R./ (R.i32(i32.(n-1)))
+         in (R.sum xs) R./ (R.i32(i32.(n-1)))
 
   let stddev vs =
     variance vs |> R.sqrt

@@ -17,8 +17,8 @@ $ futhark-pkg sync
 
 ```
 $ futharki
-> import "lib/github.com/diku-dk/sobol/statistics"
-> module s = Statistics f64
-> s.mean [3.0,4.5,6.0,6.5]
+[0]> import "lib/github.com/diku-dk/statistics/statistics"
+[1]> module s = statistics f64
+[2]> s.mean [3.0f64,4.5f64,6.0f64,6.5f64]
 5.0f64
 ```

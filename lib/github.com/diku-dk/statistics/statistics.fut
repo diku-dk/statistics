@@ -1,8 +1,6 @@
 -- | Statistics functions parameterised over the concrete
 -- representation of reals.
 
-import "/futlib/math"
-
 module type statistics = {
   type t
   -- | `mean vs` returns the arithmetic mean of the values contained in `vs`.

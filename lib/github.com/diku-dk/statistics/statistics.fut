@@ -15,8 +15,20 @@ module type statistics = {
   val qmean : []t -> t
   -- | `stddev vs` returns the standard deviation of the values contained in `vs`.
   val stddev : []t -> t
-  -- | `variance vs` returns the variance of the values contained in `vs`.
+  -- | `variance vs` returns the variance of the values contained in
+  -- | `vs`. The variance is the square of the standard deviation.
   val variance : []t -> t
+  -- | `stddev vs` returns the standard deviation of the values
+  -- | contained in `vs`. The standard deviation is the square root of
+  -- | the variance.
+  val stddev : []t -> t
+  -- | `skewness vs` returns the skewness of the values contained in
+  -- | `vs`. The skewness measures the assymetry of the values in
+  -- | `vs`. If the skewness is positive, the upper tail is thicker
+  -- | than the lower tail, whereas, if the skewness is negative, the
+  -- | lower tail is thicker than the upper tail. The skewness of a
+  -- | set of normally distributed values is zero.
+  val skewness : []t -> t
 }
 
 module statistics (R: real) : statistics with t = R.t = {
@@ -36,6 +48,7 @@ module statistics (R: real) : statistics with t = R.t = {
     else R.((sum(map (**i32 2) xs)/i32 n)**(i32 1/i32 2))
 
   let sq (x:t) : t = R.(x*x)
+  let cube (x:t) : t = R.(x*x*x)
 
   let variance [n] (vs: [n]t) : t =
     if n < 2 then R.i32 0
@@ -45,4 +58,12 @@ module statistics (R: real) : statistics with t = R.t = {
 
   let stddev vs =
     variance vs |> R.sqrt
+
+  let skewness [n] (vs: [n]t) : t =
+    if n < 2 then R.i32 0
+    else let m = mean vs
+         let s = stddev vs
+         let xs = map (\x -> R.(cube((x-m)/s))) vs
+         in (R.sum xs) R./ (R.i32 n)
+
 }

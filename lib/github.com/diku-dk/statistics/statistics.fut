@@ -9,7 +9,8 @@ module type statistics = {
   val gmean : []t -> t
   -- | `hmean vs` returns the harmonic mean of the values contained in `vs`.
   val hmean : []t -> t
-  -- | `qmean vs` returns the quadratic mean of the values contained in `vs`.
+  -- | `qmean vs` returns the quadratic mean of the values contained
+  -- in `vs`.  Also known as "root mean square".
   val qmean : []t -> t
   -- | `variance vs` returns the variance of the values contained in
   -- `vs`. The variance is the square of the standard deviation.

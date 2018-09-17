@@ -1,5 +1,5 @@
 -- | Statistics functions parameterised over the concrete
--- | representation of reals.
+-- representation of reals.
 
 import "/futlib/math"
 
@@ -16,18 +16,18 @@ module type statistics = {
   -- | `stddev vs` returns the standard deviation of the values contained in `vs`.
   val stddev : []t -> t
   -- | `variance vs` returns the variance of the values contained in
-  -- | `vs`. The variance is the square of the standard deviation.
+  -- `vs`. The variance is the square of the standard deviation.
   val variance : []t -> t
   -- | `stddev vs` returns the standard deviation of the values
-  -- | contained in `vs`. The standard deviation is the square root of
-  -- | the variance.
+  -- contained in `vs`. The standard deviation is the square root of
+  -- the variance.
   val stddev : []t -> t
   -- | `skewness vs` returns the skewness of the values contained in
-  -- | `vs`. The skewness measures the assymetry of the values in
-  -- | `vs`. If the skewness is positive, the upper tail is thicker
-  -- | than the lower tail, whereas, if the skewness is negative, the
-  -- | lower tail is thicker than the upper tail. The skewness of a
-  -- | set of normally distributed values is zero.
+  -- `vs`. The skewness measures the assymetry of the values in
+  -- `vs`. If the skewness is positive, the upper tail is thicker than
+  -- the lower tail, whereas, if the skewness is negative, the lower
+  -- tail is thicker than the upper tail. The skewness of a set of
+  -- normally distributed values is zero.
   val skewness : []t -> t
 }
 

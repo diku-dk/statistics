@@ -1,10 +1,6 @@
-# Statistics Library for Futhark
+# Statistics Library for Futhark [![Build Status](https://travis-ci.org/diku-dk/statistics.svg?branch=master)](https://travis-ci.org/diku-dk/statistics)
 
 This library provides a number of statistics functions for Futhark.
-
-## Status
-
-[![Build Status](https://travis-ci.org/diku-dk/statistics.svg?branch=master)](https://travis-ci.org/diku-dk/statistics)
 
 ## Installation
 

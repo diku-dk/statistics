@@ -33,14 +33,6 @@ module type statistics = {
   val median [n]: [n]t -> t
   -- | Median value of sorted array.
   val median_sorted [n]: [n]t -> t
-  -- | Quantile of array.
-  val quantile [n]: [n]t -> t -> t
-  -- | Quantile of sorted array.
-  val quantile_sorted [n]: [n]t -> t -> t
-  -- | Quantiless of array.
-  val quantiles [n]: [n]t -> i32 -> []t
-  -- | Quantiles of sorted array.
-  val quantiles_sorted [n]: [n]t -> i32 -> []t
 }
 
 module mk_statistics (R: float) : statistics with t = R.t = {

@@ -30,6 +30,10 @@ module type statistics = {
   val quantile [n]: [n]t -> t -> t
   -- | Quantile of sorted array.
   val quantile_sorted [n]: [n]t -> t -> t
+  -- | The most frequently occuring element of an array.
+  val mode [n]: [n]t -> t
+  -- | The most frequently occuring element of a sorted array.
+  val mode_sorted [n]: [n]t -> t
 
   -- | `skewness vs` returns the skewness of the values contained in
   -- `vs`. The skewness measures the assymetry of the values in
@@ -44,6 +48,12 @@ module mk_statistics (R: float) : statistics with t = R.t = {
   type t = R.t
 
   import "../sorts/radix_sort"
+  import "../segmented/segmented"
+
+  let argmax (none: t) (xs: []t): i32 =
+    let max (x1, y1) (x2, y2) =
+      if R.(y1 < y2) then (x2, y2) else (x1, y1)
+    in reduce max (-1, none) (zip (iota (length xs)) xs) |> (.1)
 
   let mean [n] (vs: [n]t) : t =
     R.(sum vs / i32 n)
@@ -91,4 +101,15 @@ module mk_statistics (R: float) : statistics with t = R.t = {
     in R.(i32 1-gamma) R.* xs[k-1] R.+ gamma R.* xs[k]
 
   let quantile = radix_sort_float R.num_bits R.get_bit >-> quantile_sorted
+
+  let mode_sorted [n] (xs: [n]t) : t =
+    let xs_rotated = rotate (n-1) xs
+    let xs_zip = zip xs xs_rotated
+    let flags = map2 (R.!=) xs xs_rotated
+    let vals = replicate n (R.i32 1)
+    let ys = segmented_scan (R.+) (R.i32 0) flags vals
+    let i = argmax (R.i32 0) ys
+    in xs[i]
+
+  let mode = radix_sort_float R.num_bits R.get_bit >-> mode_sorted
 }

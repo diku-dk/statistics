@@ -64,3 +64,12 @@ entry quantile_sorted = s.quantile_sorted
 -- output { 5.25 }
 
 entry quantile = s.quantile
+
+-- ==
+-- entry: mode
+-- input { [5.0, 1.0, 3.0, 2.0, 4.0] }
+-- output { 1.0 }
+-- input { [5.0, 2.0, 1.0, 3.0, 2.0, 4.0] }
+-- output { 2.0 }
+
+entry mode = s.mode

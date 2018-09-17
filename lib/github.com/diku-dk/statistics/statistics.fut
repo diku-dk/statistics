@@ -19,13 +19,6 @@ module type statistics = {
   -- contained in `vs`. The standard deviation is the square root of
   -- the variance.
   val stddev : []t -> t
-  -- | `skewness vs` returns the skewness of the values contained in
-  -- `vs`. The skewness measures the assymetry of the values in
-  -- `vs`. If the skewness is positive, the upper tail is thicker than
-  -- the lower tail, whereas, if the skewness is negative, the lower
-  -- tail is thicker than the upper tail. The skewness of a set of
-  -- normally distributed values is zero.
-  val skewness : []t -> t
 
   --- RANK STATISTICS
 
@@ -37,6 +30,14 @@ module type statistics = {
   val quantile [n]: [n]t -> t -> t
   -- | Quantile of sorted array.
   val quantile_sorted [n]: [n]t -> t -> t
+
+  -- | `skewness vs` returns the skewness of the values contained in
+  -- `vs`. The skewness measures the assymetry of the values in
+  -- `vs`. If the skewness is positive, the upper tail is thicker than
+  -- the lower tail, whereas, if the skewness is negative, the lower
+  -- tail is thicker than the upper tail. The skewness of a set of
+  -- normally distributed values is zero.
+  val skewness : []t -> t
 }
 
 module mk_statistics (R: float) : statistics with t = R.t = {

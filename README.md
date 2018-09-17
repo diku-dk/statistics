@@ -2,6 +2,9 @@
 
 This library provides a number of statistics functions for Futhark.
 
+Part of this library is based on work by Emily Erica Hueg and Marcus
+Færch Stensler.
+
 ## Installation
 
 ```

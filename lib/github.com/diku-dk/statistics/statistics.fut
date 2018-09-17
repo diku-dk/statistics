@@ -32,35 +32,32 @@ module mk_statistics (R: real) : statistics with t = R.t = {
   type t = R.t
 
   let mean [n] (vs: [n]t) : t =
-    if n == 0 then R.i32 0 else R.(sum vs / i32 n)
+    R.(sum vs / i32 n)
 
   let gmean [n] (xs: [n]t) : t =
-    if n == 0 then R.i32 0 else R.(product xs ** (i32 1/i32 n))
+    R.(product xs ** (i32 1/i32 n))
 
-   let hmean [n] (xs: [n]t) : t =
-     if n == 0 then R.i32 0 else R.(i32 n / sum (map (i32 1/) xs))
+  let hmean [n] (xs: [n]t) : t =
+    R.(i32 n / sum (map (i32 1/) xs))
 
   let qmean [n] (xs: [n]t) : t =
-    if n == 0 then R.i32 0
-    else R.((sum(map (**i32 2) xs)/i32 n)**(i32 1/i32 2))
+    R.((sum(map (**i32 2) xs)/i32 n)**(i32 1/i32 2))
 
   let sq (x:t) : t = R.(x*x)
   let cube (x:t) : t = R.(x*x*x)
 
   let variance [n] (vs: [n]t) : t =
-    if n < 2 then R.i32 0
-    else let m = mean vs
-         let xs = map (\x -> R.(sq(x-m))) vs
-         in (R.sum xs) R./ (R.i32(i32.(n-1)))
+    let m = mean vs
+    let xs = map (\x -> R.(sq(x-m))) vs
+    in (R.sum xs) R./ (R.i32(i32.(n-1)))
 
   let stddev vs =
     variance vs |> R.sqrt
 
   let skewness [n] (vs: [n]t) : t =
-    if n < 2 then R.i32 0
-    else let m = mean vs
-         let s = stddev vs
-         let xs = map (\x -> R.(cube((x-m)/s))) vs
-         in (R.sum xs) R./ (R.i32 n)
+    let m = mean vs
+    let s = stddev vs
+    let xs = map (\x -> R.(cube((x-m)/s))) vs
+    in (R.sum xs) R./ (R.i32 n)
 
 }

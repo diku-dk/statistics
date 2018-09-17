@@ -5,8 +5,16 @@ import "/futlib/math"
 
 module type statistics = {
   type t
-  -- | `mean vs` returns the mean of the values contained in `vs`.
+  -- | `mean vs` returns the arithmetic mean of the values contained in `vs`.
   val mean : []t -> t
+  -- | `gmean vs` returns the geometric mean of the values contained in `vs`.
+  val gmean : []t -> t
+  -- | `hmean vs` returns the harmonic mean of the values contained in `vs`.
+  val hmean : []t -> t
+  -- | `qmean vs` returns the quadratic mean of the values contained in `vs`.
+  val qmean : []t -> t
+  -- | `stddev vs` returns the standard deviation of the values contained in `vs`.
+  val stddev : []t -> t
   -- | `variance vs` returns the variance of the values contained in
   -- | `vs`. The variance is the square of the standard deviation.
   val variance : []t -> t
@@ -28,6 +36,16 @@ module statistics (R: real) : statistics with t = R.t = {
 
   let mean [n] (vs: [n]t) : t =
     if n == 0 then R.i32 0 else R.(sum vs / i32 n)
+
+  let gmean [n] (xs: [n]t) : t =
+    if n == 0 then R.i32 0 else R.(product xs ** (i32 1/i32 n))
+
+   let hmean [n] (xs: [n]t) : t =
+     if n == 0 then R.i32 0 else R.(i32 n / sum (map (i32 1/) xs))
+
+  let qmean [n] (xs: [n]t) : t =
+    if n == 0 then R.i32 0
+    else R.((sum(map (**i32 2) xs)/i32 n)**(i32 1/i32 2))
 
   let sq (x:t) : t = R.(x*x)
   let cube (x:t) : t = R.(x*x*x)

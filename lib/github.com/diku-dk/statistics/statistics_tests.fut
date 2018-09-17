@@ -46,3 +46,21 @@ entry median = s.median
 -- output { 5.25 }
 
 entry median_sorted = s.median_sorted
+
+-- ==
+-- entry: quantile_sorted
+-- input { [3.0,4.5,6.0,6.5] 0.3 }
+-- output { 3.9900000035762786f64 }
+-- input { [3.0,4.5,6.0,6.5] 0.5 }
+-- output { 5.25 }
+
+entry quantile_sorted = s.quantile_sorted
+
+-- ==
+-- entry: quantile
+-- input { [4.5,3.0,6.5,6.0] 0.3 }
+-- output { 3.9900000035762786f64 }
+-- input { [4.5,3.0,6.5,6.0] 0.5 }
+-- output { 5.25 }
+
+entry quantile = s.quantile

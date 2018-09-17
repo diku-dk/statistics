@@ -33,6 +33,10 @@ module type statistics = {
   val median [n]: [n]t -> t
   -- | Median value of sorted array.
   val median_sorted [n]: [n]t -> t
+  -- | Quantile of array.
+  val quantile [n]: [n]t -> t -> t
+  -- | Quantile of sorted array.
+  val quantile_sorted [n]: [n]t -> t -> t
 }
 
 module mk_statistics (R: float) : statistics with t = R.t = {
@@ -76,4 +80,14 @@ module mk_statistics (R: float) : statistics with t = R.t = {
        else xs[i]
 
   let median = radix_sort_float R.num_bits R.get_bit >-> median_sorted
+
+  let quantile_sorted [n] (xs: [n]t) (p: t) : t =
+    let (alphap, betap) = (R.f32 0.4, R.f32 0.4) -- Default in SciPy.
+    let m = R.(alphap + p*(i32 1 - alphap - betap))
+    let aleph = R.(i32 n*p + m)
+    let k = i32.max 1 (i32.min (n-1) (R.to_i32 aleph))
+    let gamma = R.(aleph-i32 k) |> R.min (R.i32 1) |> R.max (R.i32 0)
+    in R.(i32 1-gamma) R.* xs[k-1] R.+ gamma R.* xs[k]
+
+  let quantile = radix_sort_float R.num_bits R.get_bit >-> quantile_sorted
 }

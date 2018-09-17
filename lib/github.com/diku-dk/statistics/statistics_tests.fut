@@ -32,3 +32,17 @@ entry hmean = s.hmean
 -- output { 5.18411033833193 }
 
 entry qmean = s.qmean
+
+-- ==
+-- entry: median
+-- input { [4.5,3.0,6.5,6.0] }
+-- output { 5.25 }
+
+entry median = s.median
+
+-- ==
+-- entry: median_sorted
+-- input { [3.0,4.5,6.0,6.5] }
+-- output { 5.25 }
+
+entry median_sorted = s.median_sorted

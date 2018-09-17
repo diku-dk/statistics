@@ -26,10 +26,27 @@ module type statistics = {
   -- tail is thicker than the upper tail. The skewness of a set of
   -- normally distributed values is zero.
   val skewness : []t -> t
+
+  --- RANK STATISTICS
+
+  -- | Median value of array.
+  val median [n]: [n]t -> t
+  -- | Median value of sorted array.
+  val median_sorted [n]: [n]t -> t
+  -- | Quantile of array.
+  val quantile [n]: [n]t -> t -> t
+  -- | Quantile of sorted array.
+  val quantile_sorted [n]: [n]t -> t -> t
+  -- | Quantiless of array.
+  val quantiles [n]: [n]t -> i32 -> []t
+  -- | Quantiles of sorted array.
+  val quantiles_sorted [n]: [n]t -> i32 -> []t
 }
 
-module mk_statistics (R: real) : statistics with t = R.t = {
+module mk_statistics (R: float) : statistics with t = R.t = {
   type t = R.t
+
+  import "../sorts/radix_sort"
 
   let mean [n] (vs: [n]t) : t =
     R.(sum vs / i32 n)
@@ -60,4 +77,11 @@ module mk_statistics (R: real) : statistics with t = R.t = {
     let xs = map (\x -> R.(cube((x-m)/s))) vs
     in (R.sum xs) R./ (R.i32 n)
 
+  let median_sorted [n] (xs: [n]t) : t =
+    let i = n/2
+    let j = i-1
+    in if n % 2 == 0 then R.((xs[j]+xs[i]) / (i32 2) )
+       else xs[i]
+
+  let median = radix_sort_float R.num_bits R.get_bit >-> median_sorted
 }

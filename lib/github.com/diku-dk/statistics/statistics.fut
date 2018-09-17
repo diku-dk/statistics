@@ -13,8 +13,6 @@ module type statistics = {
   val hmean : []t -> t
   -- | `qmean vs` returns the quadratic mean of the values contained in `vs`.
   val qmean : []t -> t
-  -- | `stddev vs` returns the standard deviation of the values contained in `vs`.
-  val stddev : []t -> t
   -- | `variance vs` returns the variance of the values contained in
   -- `vs`. The variance is the square of the standard deviation.
   val variance : []t -> t
@@ -31,7 +29,7 @@ module type statistics = {
   val skewness : []t -> t
 }
 
-module statistics (R: real) : statistics with t = R.t = {
+module mk_statistics (R: real) : statistics with t = R.t = {
   type t = R.t
 
   let mean [n] (vs: [n]t) : t =

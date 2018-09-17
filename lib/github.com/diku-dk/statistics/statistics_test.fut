@@ -2,7 +2,7 @@
 
 import "statistics"
 
-module s = statistics f64
+module s = mk_statistics f64
 
 -- ==
 -- entry: mean

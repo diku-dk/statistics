@@ -39,6 +39,26 @@ module type statistics = {
   -- is the square root of the population variance.
   val stddev_pop : []t -> t
 
+  -- | `skewness vs` returns the skewness of the values contained in
+  -- `vs`. The skewness measures the assymetry of the values in
+  -- `vs`. If the skewness is positive, the upper tail is thicker than
+  -- the lower tail, whereas, if the skewness is negative, the lower
+  -- tail is thicker than the upper tail. The skewness of a set of
+  -- normally distributed values is zero.
+  val skewness : []t -> t
+
+  -- | `skewness_adj vs` returns the adjusted Fisher-Pearson coefficient of
+  -- skewness for the values contained in `vs`.
+  val skewness_adj : []t -> t
+
+  -- | `kurtosis vs` returns the (non-excess) kurtosis of the values
+  -- contained in `vs`.
+  val kurtosis : []t -> t
+
+  -- | `kurtosis_excess vs` returns the excess kurtosis of the values
+  -- contained in `vs`.
+  val kurtosis_excess : []t -> t
+
   --- RANK STATISTICS
 
   -- | Median value of array.
@@ -58,18 +78,6 @@ module type statistics = {
 
   -- | The most frequently occuring element of a sorted array.
   val mode_sorted [n]: [n]t -> t
-
-  -- | `skewness vs` returns the skewness of the values contained in
-  -- `vs`. The skewness measures the assymetry of the values in
-  -- `vs`. If the skewness is positive, the upper tail is thicker than
-  -- the lower tail, whereas, if the skewness is negative, the lower
-  -- tail is thicker than the upper tail. The skewness of a set of
-  -- normally distributed values is zero.
-  val skewness : []t -> t
-
-  -- | `skewness_adj vs` returns the adjusted Fisher-Pearson coefficient of
-  -- skewness for the values contained in `vs`.
-  val skewness_adj : []t -> t
 
   -- | `erf x` returns a polynomial approximation to the Gauss error
   -- function applied to `x`. The maximal approximation error is
@@ -121,12 +129,13 @@ module mk_statistics (R: float) : statistics with t = R.t = {
   let qmean [n] (xs: [n]t) : t =
     R.((sum(map (**i32 2) xs)/i32 n)**(i32 1/i32 2))
 
-  let sq (x:t) : t = R.(x*x)
-  let cube (x:t) : t = R.(x*x*x)
+  let pow2 (x:t) : t = R.(x*x)
+  let pow3 (x:t) : t = R.(x*x*x)
+  let pow4 (x:t) : t = pow2(pow2 x)
 
   let variance [n] (vs: [n]t) : t =
     let m = mean vs
-    let xs = map (\x -> R.(sq(x-m))) vs
+    let xs = map (\x -> R.(pow2(x-m))) vs
     in (R.sum xs) R./ (R.i32(i32.(n-1)))
 
   let stddev vs =
@@ -137,6 +146,24 @@ module mk_statistics (R: float) : statistics with t = R.t = {
 
   let stddev_pop vs =
     variance_pop vs |> R.sqrt
+
+  let skewness [n] (vs: [n]t) : t =
+    R.(let m = mean vs
+       let s = stddev_pop vs
+       let xs = map (\x -> pow3((x-m)/s)) vs
+       in sum xs / i32 n)
+
+  let skewness_adj [n] (vs: [n]t) : t =
+    R.(sqrt(i32 n * (i32 n - i32 1)) / (i32 n - i32 2) * skewness vs)
+
+  let kurtosis [n] (vs: [n]t) : t =
+    R.(let m = mean vs
+       let s = stddev_pop vs
+       let xs = map (\x -> pow4((x-m)/s)) vs
+       in sum xs / i32 n)
+
+  let kurtosis_excess [n] (vs: [n]t) : t =
+    R.(kurtosis vs - i32 3)
 
   let median_sorted [n] (xs: [n]t) : t =
     let i = n/2
@@ -167,15 +194,7 @@ module mk_statistics (R: float) : statistics with t = R.t = {
 
   let mode = radix_sort_float R.num_bits R.get_bit >-> mode_sorted
 
-  let skewness [n] (vs: [n]t) : t =
-    R.(let m = mean vs
-       let s = stddev_pop vs
-       let xs = map (\x -> cube((x-m)/s)) vs
-       in sum xs / i32 n)
-
-  let skewness_adj [n] (vs: [n]t) : t =
-    R.(sqrt(i32 n * (i32 n - i32 1)) / (i32 n - i32 2) * skewness vs)
-
+  -- The Gamma function
   let gamma_big (z:t) : t =  -- z >= 0.5
     R.(let p = [f64 676.5203681218851,
                 negate(f64 1259.1392167224028),
@@ -212,8 +231,6 @@ module mk_statistics (R: float) : statistics with t = R.t = {
 
   let poison_cdf (lambda:t) (x:i32) : t =
     R.(exp (negate(lambda)) * reduce (+) (i32 0) (map (\i -> lambda ** (i32 i) / fac i) (iota x)))
-
-  let pow2 (x:t) : t = R.(x*x)
 
   let normal_pdf (sigma:t) (mu:t) (x:t) : t =
     R.(exp(negate(pow2(x-mu) / (i32 2 * pow2 sigma))) / sqrt(i32 2 * pi * pow2 sigma))

@@ -39,13 +39,32 @@ module type statistics = {
   -- is the square root of the population variance.
   val stddev_pop : []t -> t
 
-  -- | `skewness vs` returns the Fisher-Pearson coefficient of
-  -- skewness for the values contained in `vs`. The skewness measures
-  -- the assymetry of the values in `vs`. If the skewness is positive,
-  -- the upper tail is thicker than the lower tail, whereas, if the
-  -- skewness is negative, the lower tail is thicker than the upper
-  -- tail. The skewness of a set of normally distributed values is
-  -- zero.
+  --- RANK STATISTICS
+
+  -- | Median value of array.
+  val median [n]: [n]t -> t
+
+  -- | Median value of sorted array.
+  val median_sorted [n]: [n]t -> t
+
+  -- | Quantile of array.
+  val quantile [n]: [n]t -> t -> t
+
+  -- | Quantile of sorted array.
+  val quantile_sorted [n]: [n]t -> t -> t
+
+  -- | The most frequently occuring element of an array.
+  val mode [n]: [n]t -> t
+
+  -- | The most frequently occuring element of a sorted array.
+  val mode_sorted [n]: [n]t -> t
+
+  -- | `skewness vs` returns the skewness of the values contained in
+  -- `vs`. The skewness measures the assymetry of the values in
+  -- `vs`. If the skewness is positive, the upper tail is thicker than
+  -- the lower tail, whereas, if the skewness is negative, the lower
+  -- tail is thicker than the upper tail. The skewness of a set of
+  -- normally distributed values is zero.
   val skewness : []t -> t
 
   -- | `skewness_adj vs` returns the adjusted Fisher-Pearson coefficient of
@@ -69,7 +88,6 @@ module type statistics = {
   -- | Generic type for distributions. Discrete distributions have
   -- type `dist i32`, whereas continues distributions have type
   -- `dist t`.
-
   type^ dist 'a
 
   val mk_poison : {lambda:t} -> dist i32
@@ -80,8 +98,16 @@ module type statistics = {
   val cdf 'a : dist a -> a -> t        -- commulative
 }
 
-module mk_statistics (R: real) : statistics with t = R.t = {
+module mk_statistics (R: float) : statistics with t = R.t = {
   type t = R.t
+
+  import "../sorts/radix_sort"
+  import "../segmented/segmented"
+
+  let argmax (none: t) (xs: []t): i32 =
+    let max (x1, y1) (x2, y2) =
+      if R.(y1 < y2) then (x2, y2) else (x1, y1)
+    in reduce max (-1, none) (zip (iota (length xs)) xs) |> (.1)
 
   let mean [n] (vs: [n]t) : t =
     R.(sum vs / i32 n)
@@ -103,14 +129,43 @@ module mk_statistics (R: real) : statistics with t = R.t = {
     let xs = map (\x -> R.(sq(x-m))) vs
     in (R.sum xs) R./ (R.i32(i32.(n-1)))
 
-  let variance_pop [n] (vs: [n]t) : t =
-    R.((i32 n - i32 1) / i32 n * variance vs)
-
   let stddev vs =
     variance vs |> R.sqrt
 
+  let variance_pop [n] (vs: [n]t) : t =
+    R.((i32 n - i32 1) / i32 n * variance vs)
+
   let stddev_pop vs =
     variance_pop vs |> R.sqrt
+
+  let median_sorted [n] (xs: [n]t) : t =
+    let i = n/2
+    let j = i-1
+    in if n % 2 == 0 then R.((xs[j]+xs[i]) / (i32 2) )
+       else xs[i]
+
+  let median = radix_sort_float R.num_bits R.get_bit >-> median_sorted
+
+  let quantile_sorted [n] (xs: [n]t) (p: t) : t =
+    let (alphap, betap) = (R.f32 0.4, R.f32 0.4) -- Default in SciPy.
+    let m = R.(alphap + p*(i32 1 - alphap - betap))
+    let aleph = R.(i32 n*p + m)
+    let k = i32.max 1 (i32.min (n-1) (R.to_i32 aleph))
+    let gamma = R.(aleph-i32 k) |> R.min (R.i32 1) |> R.max (R.i32 0)
+    in R.(i32 1-gamma) R.* xs[k-1] R.+ gamma R.* xs[k]
+
+  let quantile = radix_sort_float R.num_bits R.get_bit >-> quantile_sorted
+
+  let mode_sorted [n] (xs: [n]t) : t =
+    let xs_rotated = rotate (n-1) xs
+    let xs_zip = zip xs xs_rotated
+    let flags = map2 (R.!=) xs xs_rotated
+    let vals = replicate n (R.i32 1)
+    let ys = segmented_scan (R.+) (R.i32 0) flags vals
+    let i = argmax (R.i32 0) ys
+    in xs[i]
+
+  let mode = radix_sort_float R.num_bits R.get_bit >-> mode_sorted
 
   let skewness [n] (vs: [n]t) : t =
     R.(let m = mean vs
@@ -146,6 +201,7 @@ module mk_statistics (R: real) : statistics with t = R.t = {
 
   let gammaln (x:t) : t = Gammaln.gammaln x
 
+  -- DISTRIBUTIONS
   type dist 'a = {pXf:a -> t,cdf:a -> t}
 
   let poison_pmf (lambda:t) (x:i32) : t =

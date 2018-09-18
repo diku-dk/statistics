@@ -103,3 +103,43 @@ entry skewness = s.skewness
 -- input { [68.0,82.0,63.0,86.0,34.0,96.0,41.0,89.0,29.0,51.0,75.0,77.0,56.0,59.0,42.0] } output { -0.11001624579542711 }
 
 entry skewness_adj = s.skewness_adj
+
+-- entry: median
+-- input { [4.5,3.0,6.5,6.0] }
+-- output { 5.25 }
+
+entry median = s.median
+
+-- ==
+-- entry: median_sorted
+-- input { [3.0,4.5,6.0,6.5] }
+-- output { 5.25 }
+
+entry median_sorted = s.median_sorted
+
+-- ==
+-- entry: quantile_sorted
+-- input { [3.0,4.5,6.0,6.5] 0.3 }
+-- output { 3.9900000035762786f64 }
+-- input { [3.0,4.5,6.0,6.5] 0.5 }
+-- output { 5.25 }
+
+entry quantile_sorted = s.quantile_sorted
+
+-- ==
+-- entry: quantile
+-- input { [4.5,3.0,6.5,6.0] 0.3 }
+-- output { 3.9900000035762786f64 }
+-- input { [4.5,3.0,6.5,6.0] 0.5 }
+-- output { 5.25 }
+
+entry quantile = s.quantile
+
+-- ==
+-- entry: mode
+-- input { [5.0, 1.0, 3.0, 2.0, 4.0] }
+-- output { 1.0 }
+-- input { [5.0, 2.0, 1.0, 3.0, 2.0, 4.0] }
+-- output { 2.0 }
+
+entry mode = s.mode

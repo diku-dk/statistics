@@ -103,7 +103,7 @@ module type statistics = {
 
   val pmf : dist i32 -> i32 -> t       -- probability mass function
   val pdf : dist t -> t -> t           -- probability distribution function
-  val cdf 'a : dist a -> a -> t        -- commulative
+  val cdf 'a : dist a -> a -> t        -- cumulative distriubtion function
 }
 
 module mk_statistics (R: float) : statistics with t = R.t = {

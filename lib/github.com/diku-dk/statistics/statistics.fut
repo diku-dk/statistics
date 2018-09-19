@@ -47,8 +47,8 @@ module type statistics = {
   -- normally distributed values is zero.
   val skewness : []t -> t
 
-  -- | `skewness_adj vs` returns the adjusted Fisher-Pearson coefficient of
-  -- skewness for the values contained in `vs`.
+  -- | `skewness_adj vs` returns the adjusted Fisher-Pearson
+  -- coefficient of skewness for the values contained in `vs`.
   val skewness_adj : []t -> t
 
   -- | `kurtosis vs` returns the (non-excess) kurtosis of the values
@@ -90,7 +90,7 @@ module type statistics = {
 
   -- | `gammaln x` returns `ln((x-1)!)`, extended to work with
   -- positive non-integer values. Notice that `gammaln` is numerically
-  -- stable in contrast to calculating `log(gamma x)`.
+  -- stable in contrast to calculating `log(gamma x)` with large `x`s.
   val gammaln : t -> t
 
   -- | Generic type for distributions. Discrete distributions have
@@ -101,9 +101,13 @@ module type statistics = {
   val mk_poison : {lambda:t} -> dist i32
   val mk_normal : {mu:t,sigma:t} -> dist t
 
-  val pmf : dist i32 -> i32 -> t       -- probability mass function
-  val pdf : dist t -> t -> t           -- probability distribution function
-  val cdf 'a : dist a -> a -> t        -- cumulative distriubtion function
+  val pmf : dist i32 -> i32 -> t   -- probability mass function
+  val pdf : dist t -> t -> t       -- probability distribution function
+  val cdf 'a : dist a -> a -> t    -- cumulative distriubtion function
+
+  -- | `sample d r` returns a sample from the distribution `d` given a
+  -- real value `r` taken from a uniform distribution U(0,1).
+  val sample 'a : dist a -> t -> a
 }
 
 module mk_statistics (R: float) : statistics with t = R.t = {
@@ -221,7 +225,7 @@ module mk_statistics (R: float) : statistics with t = R.t = {
   let gammaln (x:t) : t = Gammaln.gammaln x
 
   -- DISTRIBUTIONS
-  type dist 'a = {pXf:a -> t,cdf:a -> t}
+  type dist 'a = {pXf:a -> t,cdf:a -> t,cdfi:t -> a}
 
   let poison_pmf (lambda:t) (x:i32) : t =
     R.(exp (i32 x * log lambda - lambda - gammaln (i32 x + i32 1) ))
@@ -254,15 +258,81 @@ module mk_statistics (R: float) : statistics with t = R.t = {
   let normal_cdf (sigma:t) (mu:t) (x:t) : t =
     R.((i32 1 + erf((x-mu)/(sigma * sqrt(i32 2)))) / i32 2)
 
+  let normal_cdf_inv sigma mu p =
+    R.(let A1 = negate (f64 3.969683028665376e+01)
+       let A2 = f64 2.209460984245205e+02
+       let A3 = negate(f64 2.759285104469687e+02)
+       let A4 = f64 1.383577518672690e+02
+       let A5 = negate (f64 3.066479806614716e+01)
+       let A6 = f64 2.506628277459239e+00
+
+       let B1 = negate(f64 5.447609879822406e+01)
+       let B2 = f64 1.615858368580409e+02
+       let B3 = negate(f64 1.556989798598866e+02)
+       let B4 = f64 6.680131188771972e+01
+       let B5 = negate(f64 1.328068155288572e+01)
+
+       let C1 = negate (f64 7.784894002430293e-03)
+       let C2 = negate (f64 3.223964580411365e-01)
+       let C3 = negate (f64 2.400758277161838e+00)
+       let C4 = negate (f64 2.549732539343734e+00)
+       let C5 = f64 4.374664141464968e+00
+       let C6 = f64 2.938163982698783e+00
+
+       let D1 = f64 7.784695709041462e-03
+       let D2 = f64 3.224671290700398e-01
+       let D3 = f64 2.445134137142996e+00
+       let D4 = f64 3.754408661907416e+00
+
+       let P_LOW = f64 0.02425
+       -- P_high = 1 - p_low
+       let P_HIGH = f64 0.97575
+
+       let x =
+          if i32 0 < p && p < P_LOW then
+            let q = sqrt(negate(i32 2*log p))
+            in (((((C1*q+C2)*q+C3)*q+C4)*q+C5)*q+C6) / ((((D1*q+D2)*q+D3)*q+D4)*q+i32 1)
+          else if P_LOW <= p && p <= P_HIGH then
+            let q = p - f64 0.5
+            let r = q*q
+            in (((((A1*r+A2)*r+A3)*r+A4)*r+A5)*r+A6)*q /(((((B1*r+B2)*r+B3)*r+B4)*r+B5)*r+i32 1)
+          else if P_HIGH < p && p < i32 1 then
+            let q = sqrt(negate(i32 2*log(i32 1-p)))
+            in negate(((((C1*q+C2)*q+C3)*q+C4)*q+C5)*q+C6) / ((((D1*q+D2)*q+D3)*q+D4)*q+i32 1)
+          else i32 0
+       in mu + sigma * x
+      )
+
+
+  -- let normal_cdf_inv x =
+  --   R.(let rational_approx t =
+  --        -- Abramowitz and Stegun formula 26.2.23.
+  --        -- The absolute value of the error should be less than 4.5 e-4.
+  --        let c0 = f64 2.515517
+  --        let c1 = f64 0.802853
+  --        let c2 = f64 0.010328
+  --        let d0 = f64 1.432788
+  --        let d1 = f64 0.189269
+  --        let d2 = f64 0.001308
+  --        in t - ((c2*t + c1)*t + c0) / (((d2*t + d1)*t + d0)*t + i32 1)
+  --      in if p < 0.5 then -- F^-1(p) = - G^-1(p)
+  --           negate <| rational_approx( sqrt(negate(2.0*log p)))
+  --         else -- F^-1(p) = G^-1(1-p)
+  --           rational_approx( sqrt(negate(2.0*log(1-p)))))
+
+  let poison_cdf_inv lambda x = 2
+
   let mk_poison {lambda:t} : dist i32 =
-    {pXf=poison_pmf lambda,cdf=poison_cdf lambda}
+    {pXf=poison_pmf lambda,cdf=poison_cdf lambda, cdfi=poison_cdf_inv lambda}
 
   let mk_normal {sigma:t,mu:t} : dist t =
-    {pXf=normal_pdf sigma mu,cdf=normal_cdf sigma mu}
+    {pXf=normal_pdf sigma mu,cdf=normal_cdf sigma mu,cdfi=normal_cdf_inv sigma mu}
 
-  let pmf ({pXf,cdf} : dist i32) x = pXf x
-  let pdf ({pXf,cdf} : dist t) x = pXf x
-  let cdf {pXf,cdf} x = cdf x
+  let pmf ({pXf,cdf,cdfi} : dist i32) x = pXf x
+  let pdf ({pXf,cdf,cdfi} : dist t) x = pXf x
+  let cdf {pXf,cdf,cdfi} x = cdf x
+
+  let sample {pXf,cdf,cdfi} x = cdfi x
 
   -- Cumulative Normal Distribution Function; J.C.Hull, Section 13.9 *)
   let cum_norm_dist_pos x =

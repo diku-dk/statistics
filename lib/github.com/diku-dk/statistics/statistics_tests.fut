@@ -143,3 +143,12 @@ entry quantile = s.quantile
 -- output { 2.0 }
 
 entry mode = s.mode
+
+-- ==
+-- entry: norminv
+-- input { 1.0 0.0 0.5 } output { 0.0 }
+-- input { 1.0 30.0 0.75 } output { 30.6745 }
+
+entry norminv sigma mu x =
+  let d = s.mk_normal {sigma=sigma,mu=mu}
+  in s.sample d x

@@ -108,6 +108,7 @@ module type statistics = {
 
   val mk_poison : {lambda:t} -> dist i32
   val mk_normal : {mu:t,sigma:t} -> dist t
+  val mk_uniform : {a:t,b:t} -> dist t
 
   val pmf : dist i32 -> i32 -> t   -- probability mass function
   val pdf : dist t -> t -> t       -- probability distribution function
@@ -353,6 +354,14 @@ module mk_statistics (R: float) : statistics with t = R.t = {
 
   let mk_normal {sigma:t,mu:t} : dist t =
     {pXf=normal_pdf sigma mu,cdf=normal_cdf sigma mu,cdfi=normal_cdf_inv sigma mu}
+
+  let mk_uniform {a:t,b:t} : dist t =
+    {pXf=\x -> R.(if x < a || x > b then i32 0
+                  else i32 1 / (b-a)),
+     cdf=\x -> R.(if x < a then i32 0
+                  else if x > b then i32 1
+                  else (x-a)/(b-a)),
+     cdfi=\x -> R.(a + (b-a)*x)}
 
   let pmf ({pXf,cdf,cdfi} : dist i32) x = pXf x
   let pdf ({pXf,cdf,cdfi} : dist t) x = pXf x

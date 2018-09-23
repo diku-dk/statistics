@@ -154,6 +154,14 @@ entry norminv sigma mu x =
   in s.sample d x
 
 -- ==
+-- entry: unifinv
+-- input { 3.0 6.0 0.5 } output { 4.5 }
+
+entry unifinv a b x =
+  let d = s.mk_uniform {a=a, b=b}
+  in s.sample d x
+
+-- ==
 -- entry: covariance
 -- input { [2f64,5f64,8f64,11f64] [5f64,9f64,1f64,4f64] }
 -- output { -5.5 }

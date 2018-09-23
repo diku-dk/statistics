@@ -102,7 +102,7 @@ module type statistics = {
   val gammaln : t -> t
 
   -- | Generic type for distributions. Discrete distributions have
-  -- type `dist i32`, whereas continues distributions have type
+  -- type `dist i32`, whereas continuous distributions have type
   -- `dist t`.
   type^ dist 'a
 

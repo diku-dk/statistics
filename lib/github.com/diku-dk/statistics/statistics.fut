@@ -29,6 +29,14 @@ module type statistics = {
   -- root of the sample variance.
   val stddev : []t -> t
 
+  -- | `covariance xs ys` returns the sample covariance between the
+  -- values contained in `xs` and `ys`.
+  val covariance [n] : [n]t -> [n]t -> t
+
+  -- | `correlation xs ys` returns the sample (Pearson) correlation
+  -- between the values contained in `xs` and `ys`.
+  val correlation [n] : [n]t -> [n]t -> t
+
   -- | `variance_pop vs` returns the population variance of the values
   -- contained in `vs`. The population variance is the square of the
   -- population standard deviation.
@@ -144,6 +152,24 @@ module mk_statistics (R: float) : statistics with t = R.t = {
 
   let stddev vs =
     variance vs |> R.sqrt
+
+  let covariance0 [n] (xs:[n]t) (xsm:t) (ys:[n]t) (ysm:t) : t =
+    R.(reduce (+) (i32 0) (map2 (\x y -> (x - xsm) * (y - ysm)) xs ys))
+        R./ (R.i32 (n - 1))
+
+  let covariance [n] (xs:[n]t) (ys:[n]t) : t =
+    covariance0 xs (mean xs) ys (mean ys)
+
+  let correlation xs ys =
+    R.(covariance xs ys / (stddev xs * stddev ys))
+
+  let covariance_matrix [n] (xss: [n][]t) : [n][n]t =
+    let means = map mean xss
+    in map2 ( \xs xsm ->
+              map2 (\ys ysm ->
+                    covariance0 xs xsm ys ysm
+                   ) xss means
+            ) xss means
 
   let variance_pop [n] (vs: [n]t) : t =
     R.((i32 n - i32 1) / i32 n * variance vs)

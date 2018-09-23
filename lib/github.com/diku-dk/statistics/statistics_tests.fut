@@ -152,3 +152,16 @@ entry mode = s.mode
 entry norminv sigma mu x =
   let d = s.mk_normal {sigma=sigma,mu=mu}
   in s.sample d x
+
+-- ==
+-- entry: covariance
+-- input { [2f64,5f64,8f64,11f64] [5f64,9f64,1f64,4f64] }
+-- output { -5.5 }
+entry covariance xs ys = s.covariance xs ys
+
+-- ==
+-- entry: correlation
+-- input { [2f64,5f64,8f64,11f64] [2f64,5f64,8f64,11f64] } output { 1.0 }
+-- input { [2f64,5f64,8f64,3f64] [-2f64,-5f64,-8f64,-3f64] } output { -1.0 }
+-- input { [43f64,21f64,25f64,42f64,57f64,59f64] [99f64,65f64,79f64,75f64,87f64,81f64] } output { 0.5298 }
+entry correlation xs ys = s.correlation xs ys

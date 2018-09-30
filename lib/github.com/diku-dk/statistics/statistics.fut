@@ -347,7 +347,7 @@ module mk_statistics (R: float) : statistics with t = R.t = {
   --         else -- F^-1(p) = G^-1(1-p)
   --           rational_approx( sqrt(negate(2.0*log(1-p)))))
 
-  let poison_cdf_inv lambda x = 2
+  let poison_cdf_inv _lambda _x = 2
 
   let mk_poison {lambda:t} : dist i32 =
     {pXf=poison_pmf lambda,cdf=poison_cdf lambda, cdfi=poison_cdf_inv lambda}
@@ -363,11 +363,11 @@ module mk_statistics (R: float) : statistics with t = R.t = {
                   else (x-a)/(b-a)),
      cdfi=\x -> R.(a + (b-a)*x)}
 
-  let pmf ({pXf,cdf,cdfi} : dist i32) x = pXf x
-  let pdf ({pXf,cdf,cdfi} : dist t) x = pXf x
-  let cdf {pXf,cdf,cdfi} x = cdf x
+  let pmf ({pXf,cdf=_,cdfi=_} : dist i32) x = pXf x
+  let pdf ({pXf,cdf=_,cdfi=_} : dist t) x = pXf x
+  let cdf {pXf=_,cdf,cdfi=_} x = cdf x
 
-  let sample {pXf,cdf,cdfi} x = cdfi x
+  let sample {pXf=_,cdf=_,cdfi} x = cdfi x
 
   -- Cumulative Normal Distribution Function; J.C.Hull, Section 13.9 *)
   let cum_norm_dist_pos x =

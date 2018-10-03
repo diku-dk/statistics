@@ -1,11 +1,9 @@
-# Statistics Library for Futhark [![Build Status](https://travis-ci.org/diku-dk/statistics.svg?branch=master)](https://travis-ci.org/diku-dk/statistics)
+# Statistics Library for Futhark [![Build Status](https://travis-ci.org/diku-dk/statistics.svg?branch=master)](https://travis-ci.org/diku-dk/statistics) [![Documentation](https://futhark-lang.org/pkgs/github.com/diku-dk/statistics/status.svg)](https://futhark-lang.org/pkgs/github.com/diku-dk/statistics/latest/)
 
 This library provides a number of statistics functions for Futhark.
 
 Part of this library is based on work by Emily Erica Hueg and Marcus
 Færch Stensler.
-
-[Documentation here.](https://futhark-lang.org/pkgs/github.com/diku-dk/statistics/latest/)
 
 ## Installation
 

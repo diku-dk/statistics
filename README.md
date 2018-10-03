@@ -5,6 +5,8 @@ This library provides a number of statistics functions for Futhark.
 Part of this library is based on work by Emily Erica Hueg and Marcus
 Færch Stensler.
 
+[Documentation here.](https://futhark-lang.org/pkgs/github.com/diku-dk/statistics/latest/)
+
 ## Installation
 
 ```

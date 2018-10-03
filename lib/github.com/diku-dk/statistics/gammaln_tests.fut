@@ -1,4 +1,4 @@
---| ignore
+-- | ignore
 
 import "gammaln"
 

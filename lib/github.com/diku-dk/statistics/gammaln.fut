@@ -247,13 +247,13 @@ let gammaln (x:t) : t =
                       let p = y * (SC + y*polyvalS y)
                       let q = RC + y*polyvalR y
                       let r = f64 0.5 * y + p/q  -- gammaln(1+s) = ln(s) + gammaln(s)
-                      let case v z = if flg >= i32 v then z*(y+(i32 v - i32 1)) else z
+                      let cases v z = if flg >= i32 v then z*(y+(i32 v - i32 1)) else z
                       let z = i32 1
-                      let z = case 7 z
-                      let z = case 6 z
-                      let z = case 5 z
-                      let z = case 4 z
-                      let z = case 3 z
+                      let z = cases 7 z
+                      let z = cases 6 z
+                      let z = cases 5 z
+                      let z = cases 4 z
+                      let z = cases 3 z
                       in if flg > i32 2 then r + log z
                          else r
                     else if x < TWO58 then -- 8 <= x < 2**58

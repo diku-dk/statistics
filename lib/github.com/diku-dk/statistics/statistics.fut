@@ -347,7 +347,7 @@ module mk_statistics (R: float) : statistics with t = R.t = {
   --         else -- F^-1(p) = G^-1(1-p)
   --           rational_approx( sqrt(negate(2.0*log(1-p)))))
 
-  let poison_cdf_inv _lambda _x = 2
+  let poison_cdf_inv _lambda _x: i32 = 2
 
   let mk_poison {lambda:t} : dist i32 =
     {pXf=poison_pmf lambda,cdf=poison_cdf lambda, cdfi=poison_cdf_inv lambda}

@@ -7,27 +7,27 @@ module type statistics = {
   type t
 
   -- | `mean vs` returns the arithmetic mean of the values contained in `vs`.
-  val mean : []t -> t
+  val mean [n] : [n]t -> t
 
   -- | `gmean vs` returns the geometric mean of the values contained in `vs`.
-  val gmean : []t -> t
+  val gmean [n] : [n]t -> t
 
   -- | `hmean vs` returns the harmonic mean of the values contained in `vs`.
-  val hmean : []t -> t
+  val hmean [n] : [n]t -> t
 
   -- | `qmean vs` returns the quadratic mean of the values contained
   -- in `vs`.  Also known as "root mean square".
-  val qmean : []t -> t
+  val qmean [n] : [n]t -> t
 
   -- | `variance vs` returns the sample variance of the values
   -- contained in `vs`. The sample variance is the square of the
   -- sample standard deviation.
-  val variance : []t -> t
+  val variance [n] : [n]t -> t
 
   -- | `stddev vs` returns the sample standard deviation of the values
   -- contained in `vs`. The sample standard deviation is the square
   -- root of the sample variance.
-  val stddev : []t -> t
+  val stddev [n] : [n]t -> t
 
   -- | `covariance xs ys` returns the sample covariance between the
   -- values contained in `xs` and `ys`.
@@ -40,12 +40,12 @@ module type statistics = {
   -- | `variance_pop vs` returns the population variance of the values
   -- contained in `vs`. The population variance is the square of the
   -- population standard deviation.
-  val variance_pop : []t -> t
+  val variance_pop [n] : [n]t -> t
 
   -- | `stddev_pop vs` returns the population standard deviation of
   -- the values contained in `vs`. The population standard deviation
   -- is the square root of the population variance.
-  val stddev_pop : []t -> t
+  val stddev_pop [n] : [n]t -> t
 
   -- | `skewness vs` returns the skewness of the values contained in
   -- `vs`. The skewness measures the assymetry of the values in
@@ -53,19 +53,19 @@ module type statistics = {
   -- the lower tail, whereas, if the skewness is negative, the lower
   -- tail is thicker than the upper tail. The skewness of a set of
   -- normally distributed values is zero.
-  val skewness : []t -> t
+  val skewness [n] : [n]t -> t
 
   -- | `skewness_adj vs` returns the adjusted Fisher-Pearson
   -- coefficient of skewness for the values contained in `vs`.
-  val skewness_adj : []t -> t
+  val skewness_adj [n] : [n]t -> t
 
   -- | `kurtosis vs` returns the (non-excess) kurtosis of the values
   -- contained in `vs`.
-  val kurtosis : []t -> t
+  val kurtosis [n] : [n]t -> t
 
   -- | `kurtosis_excess vs` returns the excess kurtosis of the values
   -- contained in `vs`.
-  val kurtosis_excess : []t -> t
+  val kurtosis_excess [n] : [n]t -> t
 
   --- RANK STATISTICS
 
@@ -125,10 +125,10 @@ module mk_statistics (R: float) : statistics with t = R.t = {
   import "../sorts/radix_sort"
   import "../segmented/segmented"
 
-  let argmax (none: t) (xs: []t): i32 =
+  let argmax [n] (none: t) (xs: [n]t): i32 =
     let max (x1, y1) (x2, y2) =
       if R.(y1 < y2) then (x2, y2) else (x1, y1)
-    in reduce max (-1, none) (zip (iota (length xs)) xs) |> (.1)
+    in reduce max (-1, none) (zip (iota n) xs) |> (.1)
 
   let mean [n] (vs: [n]t) : t =
     R.(sum vs / i32 n)
@@ -238,7 +238,7 @@ module mk_statistics (R: float) : statistics with t = R.t = {
        in let z = z - i32 1
           let x = f64 0.99999999999980993
           let x = x + reduce (+) (i32 0) (map2 (\i pval ->
-                                                pval / (z+i32 i+i32 1)) (iota(length p)) p)
+                                                pval / (z+i32 i+i32 1)) (iota 8) p)
           let t = z + i32(length p) - f64 0.5
           in sqrt(i32 2 * pi) * t**(z+f64 0.5) * exp(negate t) * x)
 

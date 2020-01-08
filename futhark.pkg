@@ -1,6 +1,6 @@
 package github.com/diku-dk/statistics
 
 require {
-  github.com/diku-dk/sorts 0.1.0 #37e9bc38ddf650ef80d9044ee7fab757179788fe
-  github.com/diku-dk/segmented 0.1.0 #2f06da7b048cc45cad89a0829012a63ab639d361
+  github.com/diku-dk/sorts 0.3.8 #a221d05c6e19f8245075b6acff96c273424fdc73
+  github.com/diku-dk/segmented 0.2.6 #12e111194a6fb7d19edb33b5d5601e2e90aa4c72
 }

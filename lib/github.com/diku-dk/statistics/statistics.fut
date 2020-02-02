@@ -128,7 +128,7 @@ module mk_statistics (R: float) : statistics with t = R.t = {
   let argmax [n] (none: t) (xs: [n]t): i32 =
     let max (x1, y1) (x2, y2) =
       if R.(y1 < y2) then (x2, y2) else (x1, y1)
-    in reduce max (-1, none) (zip (iota n) xs) |> (.1)
+    in reduce max (-1, none) (zip (iota n) xs) |> (.0)
 
   let mean [n] (vs: [n]t) : t =
     R.(sum vs / i32 n)
@@ -252,7 +252,7 @@ module mk_statistics (R: float) : statistics with t = R.t = {
   let gammaln (x:t) : t = Gammaln.gammaln x
 
   -- DISTRIBUTIONS
-  type dist 'a = {pXf:a -> t,cdf:a -> t,cdfi:t -> a}
+  type^ dist 'a = {pXf:a -> t,cdf:a -> t,cdfi:t -> a}
 
   let poison_pmf (lambda:t) (x:i32) : t =
     R.(exp (i32 x * log lambda - lambda - gammaln (i32 x + i32 1) ))

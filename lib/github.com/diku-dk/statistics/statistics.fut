@@ -87,6 +87,12 @@ module type statistics = {
   -- | The most frequently occuring element of a sorted array.
   val mode_sorted [n]: [n]t -> t
 
+  -- | `beta` is the slope and `mu` is the mean.
+  type regression_result = {beta: t, mu: t}
+
+  -- | Linear regression in two variables.
+  val regress [n]: [n]t -> [n]t -> regression_result
+
   -- | `erf x` returns a polynomial approximation to the Gauss error
   -- function applied to `x`. The maximal approximation error is
   -- 0.00000012 for any argument `x`.
@@ -224,6 +230,19 @@ module mk_statistics (R: float) : statistics with t = R.t = {
     in xs[i]
 
   let mode = radix_sort_float R.num_bits R.get_bit >-> mode_sorted
+
+  type regression_result = {beta: t, mu: t}
+
+  let regress(xs)(ys) =
+    let xs_bar = mean xs
+    let ys_bar = mean ys
+    let x_norm = map (R.- xs_bar) xs
+    let y_norm = map (R.- ys_bar) ys
+    let beta_denom = R.sum (map (\x -> x R.* x) x_norm)
+    let beta_num = R.sum (map2 (R.*) x_norm y_norm)
+    let beta = beta_num R./ beta_denom
+    let mu = ys_bar R.- beta R.* xs_bar
+    in {beta = beta, mu = mu}
 
   -- The Gamma function
   let gamma_big (z:t) : t =  -- z >= 0.5

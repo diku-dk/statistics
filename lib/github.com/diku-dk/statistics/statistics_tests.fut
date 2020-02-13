@@ -145,6 +145,13 @@ entry quantile = s.quantile
 entry mode = s.mode
 
 -- ==
+-- entry: regress
+-- input { [1.0, 2.0, 3.0] [2.0, 4.0, 6.0] }
+-- output { 2.0 }
+
+entry regress (xs)(ys) = (s.regress xs ys).beta
+
+-- ==
 -- entry: norminv
 -- input { 1.0 0.0 0.5 } output { 0.0 }
 -- input { 1.0 30.0 0.75 } output { 30.6745 }

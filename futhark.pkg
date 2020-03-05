@@ -2,5 +2,5 @@ package github.com/diku-dk/statistics
 
 require {
   github.com/diku-dk/sorts 0.3.10 #a9a16f410669a08684182e295ff66f48a085a6bc
-  github.com/diku-dk/segmented 0.2.7 #0cde0f3ae830f8436af2e019db700890bdf3b8dd
+  github.com/diku-dk/segmented 0.3.0 #cc42eee5512f0816fa8a3acfe5cfa082adb8fe2d
 }

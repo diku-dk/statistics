@@ -4,6 +4,7 @@
 import "gammaln"
 
 module type statistics = {
+  -- | The type of scalars that the functions operate on.
   type t
 
   -- | `mean vs` returns the arithmetic mean of the values contained in `vs`.

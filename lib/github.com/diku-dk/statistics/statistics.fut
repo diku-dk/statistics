@@ -132,22 +132,22 @@ module mk_statistics (R: float) : statistics with t = R.t = {
   import "../sorts/radix_sort"
   import "../segmented/segmented"
 
-  let argmax [n] (none: t) (xs: [n]t): i32 =
+  let argmax [n] (none: t) (xs: [n]t): i64 =
     let max (x1, y1) (x2, y2) =
       if R.(y1 < y2) then (x2, y2) else (x1, y1)
     in reduce max (-1, none) (zip (iota n) xs) |> (.0)
 
   let mean [n] (vs: [n]t) : t =
-    R.(sum vs / i32 n)
+    R.(sum vs / i64 n)
 
   let gmean [n] (xs: [n]t) : t =
-    R.(product xs ** (i32 1/i32 n))
+    R.(product xs ** (i32 1/i64 n))
 
   let hmean [n] (xs: [n]t) : t =
-    R.(i32 n / sum (map (i32 1/) xs))
+    R.(i64 n / sum (map (i32 1/) xs))
 
   let qmean [n] (xs: [n]t) : t =
-    R.((sum(map (**i32 2) xs)/i32 n)**(i32 1/i32 2))
+    R.((sum(map (**i32 2) xs)/i64 n)**(i32 1/i32 2))
 
   let pow2 (x:t) : t = R.(x*x)
   let pow3 (x:t) : t = R.(x*x*x)
@@ -156,14 +156,14 @@ module mk_statistics (R: float) : statistics with t = R.t = {
   let variance [n] (vs: [n]t) : t =
     let m = mean vs
     let xs = map (\x -> R.(pow2(x-m))) vs
-    in (R.sum xs) R./ (R.i32(i32.(n-1)))
+    in (R.sum xs) R./ (R.i64(n-1))
 
   let stddev vs =
     variance vs |> R.sqrt
 
   let covariance0 [n] (xs:[n]t) (xsm:t) (ys:[n]t) (ysm:t) : t =
     R.(reduce (+) (i32 0) (map2 (\x y -> (x - xsm) * (y - ysm)) xs ys))
-        R./ (R.i32 (n - 1))
+        R./ (R.i64 (n - 1))
 
   let covariance [n] (xs:[n]t) (ys:[n]t) : t =
     covariance0 xs (mean xs) ys (mean ys)
@@ -180,7 +180,7 @@ module mk_statistics (R: float) : statistics with t = R.t = {
             ) xss means
 
   let variance_pop [n] (vs: [n]t) : t =
-    R.((i32 n - i32 1) / i32 n * variance vs)
+    R.((i64 n - i64 1) / i64 n * variance vs)
 
   let stddev_pop vs =
     variance_pop vs |> R.sqrt
@@ -189,19 +189,19 @@ module mk_statistics (R: float) : statistics with t = R.t = {
     R.(let m = mean vs
        let s = stddev_pop vs
        let xs = map (\x -> pow3((x-m)/s)) vs
-       in sum xs / i32 n)
+       in sum xs / i64 n)
 
   let skewness_adj [n] (vs: [n]t) : t =
-    R.(sqrt(i32 n * (i32 n - i32 1)) / (i32 n - i32 2) * skewness vs)
+    R.(sqrt(i64 n * (i64 n - i64 1)) / (i64 n - i64 2) * skewness vs)
 
   let kurtosis [n] (vs: [n]t) : t =
     R.(let m = mean vs
        let s = stddev_pop vs
        let xs = map (\x -> pow4((x-m)/s)) vs
-       in sum xs / i32 n)
+       in sum xs / i64 n)
 
   let kurtosis_excess [n] (vs: [n]t) : t =
-    R.(kurtosis vs - i32 3)
+    R.(kurtosis vs - i64 3)
 
   let median_sorted [n] (xs: [n]t) : t =
     let i = n/2
@@ -214,10 +214,10 @@ module mk_statistics (R: float) : statistics with t = R.t = {
   let quantile_sorted [n] (xs: [n]t) (p: t) : t =
     let (alphap, betap) = (R.f32 0.4, R.f32 0.4) -- Default in SciPy.
     let m = R.(alphap + p*(i32 1 - alphap - betap))
-    let aleph = R.(i32 n*p + m)
-    let k = i32.max 1 (i32.min (n-1) (R.to_i32 aleph))
-    let gammav = R.(aleph-i32 k) |> R.min (R.i32 1) |> R.max (R.i32 0)
-    in R.(i32 1-gammav) R.* xs[k-1] R.+ gammav R.* xs[k]
+    let aleph = R.(i64 n*p + m)
+    let k = i64.max 1 (i64.min (n-1) (R.to_i64 aleph))
+    let gammav = R.(aleph-i64 k) |> R.min (R.i32 1) |> R.max (R.i32 0)
+    in R.(i64 1-gammav) R.* xs[k-1] R.+ gammav R.* xs[k]
 
   let quantile = radix_sort_float R.num_bits R.get_bit >-> quantile_sorted
 
@@ -258,9 +258,10 @@ module mk_statistics (R: float) : statistics with t = R.t = {
        in let z = z - i32 1
           let x = f64 0.99999999999980993
           let x = x + reduce (+) (i32 0) (map2 (\i pval ->
-                                                pval / (z+i32 i+i32 1)) (iota 8) p)
-          let t = z + i32(length p) - f64 0.5
-          in sqrt(i32 2 * pi) * t**(z+f64 0.5) * exp(negate t) * x)
+                                                  pval / (z+i64 i+i64 1))
+                                               (iota 8) p)
+          let t = z + i64(length p) - f64 0.5
+          in sqrt(i64 2 * pi) * t**(z+f64 0.5) * exp(negate t) * x)
 
   let gamma (z:t) : t =
     R.(if z < f64 0.5 then
@@ -278,10 +279,11 @@ module mk_statistics (R: float) : statistics with t = R.t = {
     R.(exp (i32 x * log lambda - lambda - gammaln (i32 x + i32 1) ))
 
   let fac n =
-    R.(reduce (*) (i32 1) (map (\x -> i32 x + i32 1) (iota n)))
+    R.(reduce (*) (i64 1) (map (\x -> i64 x + i64 1) (iota n)))
 
   let poison_cdf (lambda:t) (x:i32) : t =
-    R.(exp (negate(lambda)) * reduce (+) (i32 0) (map (\i -> lambda ** (i32 i) / fac i) (iota x)))
+    let x = i64.i32 x in
+    R.(exp (negate(lambda)) * reduce (+) (i64 0) (map (\i -> lambda ** (i64 i) / fac i) (iota x)))
 
   let normal_pdf (sigma:t) (mu:t) (x:t) : t =
     R.(exp(negate(pow2(x-mu) / (i32 2 * pow2 sigma))) / sqrt(i32 2 * pi * pow2 sigma))

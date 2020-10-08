@@ -170,7 +170,7 @@ let TF = R.negate(R.f64 1.21486290535849611461e-01) -- 0xBFBF19B9BCC38A42
 let TT = R.negate(R.f64 3.63867699703950536541e-18) -- 0xBC50C7CAA48A971F => TT = -(tail of TF)
 
 let evalpoly [n] (coffs:[n]t) (x:t) : t =
-  R.(reduce (+) (i32 0) (map2 (\i c -> c * (x ** i32 i)) (iota n) coffs))
+  R.(reduce (+) (i64 0) (map2 (\i c -> c * (x ** i64 i)) (iota n) coffs))
 
 let polyvalA1 = evalpoly A1
 let polyvalA2 = evalpoly A2

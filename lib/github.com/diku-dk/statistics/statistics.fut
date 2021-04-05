@@ -223,7 +223,6 @@ module mk_statistics (R: float) : statistics with t = R.t = {
 
   let mode_sorted [n] (xs: [n]t) : t =
     let xs_rotated = rotate (n-1) xs
-    let xs_zip = zip xs xs_rotated
     let flags = map2 (R.!=) xs xs_rotated
     let vals = replicate n (R.i32 1)
     let ys = segmented_scan (R.+) (R.i32 0) flags vals

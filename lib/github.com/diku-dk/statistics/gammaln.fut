@@ -112,7 +112,7 @@ let R' = [R.f64 1.39200533467621045958e+00, -- 0x3FF645A762C4AB74
           R.f64 7.32668430744625636189e-06  -- 0x3EDEBAF7A5B38140
          ]
 
-let SC = R.negate(R.f64 7.72156649015328655494e-02) -- 0xBFB3C467E37DB0C8
+let SC = R.neg(R.f64 7.72156649015328655494e-02) -- 0xBFB3C467E37DB0C8
 
 let S = [R.f64 2.14982415960608852501e-01,  -- 0x3FCB848B36E20878
          R.f64 3.25778796408930981787e-01,  -- 0x3FD4D98F4F139F59
@@ -122,24 +122,24 @@ let S = [R.f64 2.14982415960608852501e-01,  -- 0x3FCB848B36E20878
          R.f64 3.19475326584100867617e-05   -- 0x3F00BFECDD17E945
         ]
 let T1C = R.f64 4.83836122723810047042e-01 -- 0x3FDEF72BC8EE38A2
-let T1 = [R.negate(R.f64 3.27885410759859649565e-02), -- 0xBFA0C9A8DF35B713
+let T1 = [R.neg(R.f64 3.27885410759859649565e-02), -- 0xBFA0C9A8DF35B713
           R.f64 6.10053870246291332635e-03,  -- 0x3F78FCE0E370E344
-          R.negate(R.f64 1.40346469989232843813e-03), -- 0xBF56FE8EBF2D1AF1
+          R.neg(R.f64 1.40346469989232843813e-03), -- 0xBF56FE8EBF2D1AF1
           R.f64 3.15632070903625950361e-04   -- 0x3F34AF6D6C0EBBF7
          ]
-let T2C = R.negate(R.f64 1.47587722994593911752e-01) -- 0xBFC2E4278DC6C509
+let T2C = R.neg(R.f64 1.47587722994593911752e-01) -- 0xBFC2E4278DC6C509
 let T2 = [R.f64 1.79706750811820387126e-02,  -- 0x3F9266E7970AF9EC
-          R.negate(R.f64 3.68452016781138256760e-03), -- 0xBF6E2EFFB3E914D7
+          R.neg(R.f64 3.68452016781138256760e-03), -- 0xBF6E2EFFB3E914D7
           R.f64 8.81081882437654011382e-04,  -- 0x3F4CDF0CEF61A8E9
-          R.negate(R.f64 3.12754168375120860518e-04)  -- 0xBF347F24ECC38C38
+          R.neg(R.f64 3.12754168375120860518e-04)  -- 0xBF347F24ECC38C38
          ]
 let T3C = R.f64 6.46249402391333854778e-02 -- 0x3FB08B4294D5419B
-let T3 = [R.negate(R.f64 1.03142241298341437450e-02), -- 0xBF851F9FBA91EC6A
+let T3 = [R.neg(R.f64 1.03142241298341437450e-02), -- 0xBF851F9FBA91EC6A
           R.f64 2.25964780900612472250e-03,  -- 0x3F6282D32E15C915
-          R.negate(R.f64 5.38595305356740546715e-04), -- 0xBF41A6109C73E0EC
+          R.neg(R.f64 5.38595305356740546715e-04), -- 0xBF41A6109C73E0EC
           R.f64 3.35529192635519073543e-04   -- 0x3F35FD3EE8C2D3F4
          ]
-let UC = R.negate(R.f64 7.72156649015328655494e-02) -- 0xBFB3C467E37DB0C8
+let UC = R.neg(R.f64 7.72156649015328655494e-02) -- 0xBFB3C467E37DB0C8
 let U = [R.f64 6.32827064025093366517e-01,  -- 0x3FE4401E8B005DFF
          R.f64 1.45492250137234768737e+00,  -- 0x3FF7475CD119BD6F
          R.f64 9.77717527963372745603e-01,  -- 0x3FEF497644EA8450
@@ -155,19 +155,19 @@ let V = [R.f64 2.45597793713041134822e+00, -- 0x4003A5D7C2BD619C
         ]
 let WC = R.f64 4.18938533204672725052e-01 -- 0x3FDACFE390C97D69
 let W = [R.f64 8.33333333333329678849e-02,  -- 0x3FB555555555553B
-         R.negate(R.f64 2.77777777728775536470e-03), -- 0xBF66C16C16B02E5C
+         R.neg(R.f64 2.77777777728775536470e-03), -- 0xBF66C16C16B02E5C
          R.f64 7.93650558643019558500e-04,  -- 0x3F4A019F98CF38B6
-         R.negate(R.f64 5.95187557450339963135e-04), -- 0xBF4380CB8C0FE741
+         R.neg(R.f64 5.95187557450339963135e-04), -- 0xBF4380CB8C0FE741
          R.f64 8.36339918996282139126e-04,  -- 0x3F4B67BA4CDAD5D1
-         R.negate(R.f64 1.63092934096575273989e-03)  -- 0xBF5AB89D0B9E43E4
+         R.neg(R.f64 1.63092934096575273989e-03)  -- 0xBF5AB89D0B9E43E4
         ]
 let YMIN = R.f64 1.461632144968362245
 let TWO52 = R.f64 4503599627370496 -- 2**52
 let TWO58 = R.f64 288230376151711744 -- 2**58
 let TINY = R.f64 8.470329472543003e-22
 let TC = R.f64 1.46163214496836224576e+00 -- 0x3FF762D86356BE3F
-let TF = R.negate(R.f64 1.21486290535849611461e-01) -- 0xBFBF19B9BCC38A42
-let TT = R.negate(R.f64 3.63867699703950536541e-18) -- 0xBC50C7CAA48A971F => TT = -(tail of TF)
+let TF = R.neg(R.f64 1.21486290535849611461e-01) -- 0xBFBF19B9BCC38A42
+let TT = R.neg(R.f64 3.63867699703950536541e-18) -- 0xBC50C7CAA48A971F => TT = -(tail of TF)
 
 let evalpoly [n] (coffs:[n]t) (x:t) : t =
   R.(reduce (+) (i64 0) (map2 (\i c -> c * (x ** i64 i)) (iota n) coffs))
@@ -204,20 +204,20 @@ let case1 r y =
 let case2 r y =
   R.(let p1 = y * (UC + y*polyvalU y)
      let p2 = VC + y*polyvalV y
-     in r + ( negate(f64 0.5) * y + p1/p2 ))
+     in r + ( neg(f64 0.5) * y + p1/p2 ))
 
 let gammaln (x:t) : t =
   R.(if isnan x || isinf x then x
      else if x == i32 0 then inf
      else let (isNegative,x) =
-            if x < i32 0 then (true,negate x)
+            if x < i32 0 then (true,neg x)
             else (false,x)
           let return r =
             if isNegative then
                let nadj = log( pi / abs( sinpi(x) * x ) )
                in nadj - r
             else r
-          in if x < TINY then negate(log x)
+          in if x < TINY then neg(log x)
              else if isNegative && x >= TWO52 then inf
              else if isNegative && sinpi x == i32 0 then inf
              else if x == i32 1 || x == i32 2 then i32 0
@@ -225,7 +225,7 @@ let gammaln (x:t) : t =
                let r =
                  if x < i32 2 then
                    if x <= f64 0.9 then
-                      let r = negate(log x)
+                      let r = neg(log x)
                       in if x >= ( YMIN - i32 1 + f64 0.27 ) then
                             case0 r (i32 1 - x)
                          else if x >= (YMIN - i32 1 - f64 0.27) then

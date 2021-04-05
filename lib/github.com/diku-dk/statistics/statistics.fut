@@ -248,11 +248,11 @@ module mk_statistics (R: float) : statistics with t = R.t = {
   -- The Gamma function
   let gamma_big (z:t) : t =  -- z >= 0.5
     R.(let p = [f64 676.5203681218851,
-                negate(f64 1259.1392167224028),
+                neg(f64 1259.1392167224028),
                 f64 771.32342877765313,
-                negate (f64 176.61502916214059),
+                neg (f64 176.61502916214059),
                 f64 12.507343278686905,
-                negate (f64 0.13857109526572012),
+                neg (f64 0.13857109526572012),
                 f64 9.9843695780195716e-6,
                 f64 1.5056327351493116e-7]
        in let z = z - i32 1
@@ -261,7 +261,7 @@ module mk_statistics (R: float) : statistics with t = R.t = {
                                                   pval / (z+i64 i+i64 1))
                                                (iota 8) p)
           let t = z + i64(length p) - f64 0.5
-          in sqrt(i64 2 * pi) * t**(z+f64 0.5) * exp(negate t) * x)
+          in sqrt(i64 2 * pi) * t**(z+f64 0.5) * exp(neg t) * x)
 
   let gamma (z:t) : t =
     R.(if z < f64 0.5 then
@@ -283,10 +283,10 @@ module mk_statistics (R: float) : statistics with t = R.t = {
 
   let poison_cdf (lambda:t) (x:i32) : t =
     let x = i64.i32 x in
-    R.(exp (negate(lambda)) * reduce (+) (i64 0) (map (\i -> lambda ** (i64 i) / fac i) (iota x)))
+    R.(exp (neg(lambda)) * reduce (+) (i64 0) (map (\i -> lambda ** (i64 i) / fac i) (iota x)))
 
   let normal_pdf (sigma:t) (mu:t) (x:t) : t =
-    R.(exp(negate(pow2(x-mu) / (i32 2 * pow2 sigma))) / sqrt(i32 2 * pi * pow2 sigma))
+    R.(exp(neg(pow2(x-mu) / (i32 2 * pow2 sigma))) / sqrt(i32 2 * pi * pow2 sigma))
 
   let erf (x:t) : t =
     R.(let t = i32 1 / (i32 1 + (abs x / i32 2))
@@ -308,23 +308,23 @@ module mk_statistics (R: float) : statistics with t = R.t = {
     R.((i32 1 + erf((x-mu)/(sigma * sqrt(i32 2)))) / i32 2)
 
   let normal_cdf_inv sigma mu p =
-    R.(let A1 = negate (f64 3.969683028665376e+01)
+    R.(let A1 = neg (f64 3.969683028665376e+01)
        let A2 = f64 2.209460984245205e+02
-       let A3 = negate(f64 2.759285104469687e+02)
+       let A3 = neg(f64 2.759285104469687e+02)
        let A4 = f64 1.383577518672690e+02
-       let A5 = negate (f64 3.066479806614716e+01)
+       let A5 = neg (f64 3.066479806614716e+01)
        let A6 = f64 2.506628277459239e+00
 
-       let B1 = negate(f64 5.447609879822406e+01)
+       let B1 = neg(f64 5.447609879822406e+01)
        let B2 = f64 1.615858368580409e+02
-       let B3 = negate(f64 1.556989798598866e+02)
+       let B3 = neg(f64 1.556989798598866e+02)
        let B4 = f64 6.680131188771972e+01
-       let B5 = negate(f64 1.328068155288572e+01)
+       let B5 = neg(f64 1.328068155288572e+01)
 
-       let C1 = negate (f64 7.784894002430293e-03)
-       let C2 = negate (f64 3.223964580411365e-01)
-       let C3 = negate (f64 2.400758277161838e+00)
-       let C4 = negate (f64 2.549732539343734e+00)
+       let C1 = neg (f64 7.784894002430293e-03)
+       let C2 = neg (f64 3.223964580411365e-01)
+       let C3 = neg (f64 2.400758277161838e+00)
+       let C4 = neg (f64 2.549732539343734e+00)
        let C5 = f64 4.374664141464968e+00
        let C6 = f64 2.938163982698783e+00
 
@@ -339,15 +339,15 @@ module mk_statistics (R: float) : statistics with t = R.t = {
 
        let x =
           if i32 0 < p && p < P_LOW then
-            let q = sqrt(negate(i32 2*log p))
+            let q = sqrt(neg(i32 2*log p))
             in (((((C1*q+C2)*q+C3)*q+C4)*q+C5)*q+C6) / ((((D1*q+D2)*q+D3)*q+D4)*q+i32 1)
           else if P_LOW <= p && p <= P_HIGH then
             let q = p - f64 0.5
             let r = q*q
             in (((((A1*r+A2)*r+A3)*r+A4)*r+A5)*r+A6)*q /(((((B1*r+B2)*r+B3)*r+B4)*r+B5)*r+i32 1)
           else if P_HIGH < p && p < i32 1 then
-            let q = sqrt(negate(i32 2*log(i32 1-p)))
-            in negate(((((C1*q+C2)*q+C3)*q+C4)*q+C5)*q+C6) / ((((D1*q+D2)*q+D3)*q+D4)*q+i32 1)
+            let q = sqrt(neg(i32 2*log(i32 1-p)))
+            in neg(((((C1*q+C2)*q+C3)*q+C4)*q+C5)*q+C6) / ((((D1*q+D2)*q+D3)*q+D4)*q+i32 1)
           else i32 0
        in mu + sigma * x
       )
@@ -365,9 +365,9 @@ module mk_statistics (R: float) : statistics with t = R.t = {
   --        let d2 = f64 0.001308
   --        in t - ((c2*t + c1)*t + c0) / (((d2*t + d1)*t + d0)*t + i32 1)
   --      in if p < 0.5 then -- F^-1(p) = - G^-1(p)
-  --           negate <| rational_approx( sqrt(negate(2.0*log p)))
+  --           neg <| rational_approx( sqrt(neg(2.0*log p)))
   --         else -- F^-1(p) = G^-1(1-p)
-  --           rational_approx( sqrt(negate(2.0*log(1-p)))))
+  --           rational_approx( sqrt(neg(2.0*log(1-p)))))
 
   let poison_cdf_inv _lambda _x: i32 = 2
 
@@ -399,12 +399,12 @@ module mk_statistics (R: float) : statistics with t = R.t = {
        let a3 = f64 1.781477937
        let a4 = f64 (-1.821255978)
        let a5 = f64 1.330274429
-       let N' x = exp(negate(x*x)) / sqrt(i32 2 * pi)
+       let N' x = exp(neg(x*x)) / sqrt(i32 2 * pi)
        in i32 1 - ((N' x) * (a1*k + a2*k*k + a3*k*k*k + a4*k*k*k*k
                              + a5*k*k*k*k*k)))
 
   let cum_norm_dist x =
-    R.(if x < i32 0 then i32 1 - cum_norm_dist_pos(negate x)
+    R.(if x < i32 0 then i32 1 - cum_norm_dist_pos(neg x)
        else cum_norm_dist_pos x)
 
 }
